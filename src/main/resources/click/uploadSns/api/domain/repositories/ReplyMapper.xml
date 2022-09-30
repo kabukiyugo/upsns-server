@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="click.uploadSns.api.domain.repositories.ReplyMapper">
+
+   <resultMap type="click.uploadSns.api.domain.models.Dtos.SaveReplyDataDto" id="SaveReplyMap">
+      <id property="id" column="id" />
+      <result property="comment" column="comment"></result>
+      <result property="parentId" column="parent_id"></result>
+      <result property="insertTime" column="insert_time"></result>
+      <association property="user" javaType="click.uploadSns.api.domain.models.Dtos.UserDto" resultMap="userResult" />
+      <association property="article" javaType="click.uploadSns.api.domain.models.Dtos.ArticleDto" resultMap="articleResult" />
+   </resultMap>
+
+   <resultMap id="userResult" type="click.uploadSns.api.domain.models.Dtos.UserDto">
+      <id property="id" column="userId" />
+      <result property="name" column="userName" />
+      <result property="furigana" column="userFurigana" />
+      <result property="mail" column="userMail" />
+      <result property="telNo" column="userTelNo" />
+      <result property="password" column="userPassword" />
+      <result property="role" column="userRole" />
+      <result property="iconImagePath" column="userIconImagePath" />
+      <result property="comment" column="userComment" />
+   </resultMap>
+
+   <resultMap id="articleResult" type="click.uploadSns.api.domain.models.Dtos.ArticleDto">
+      <id property="id" column="articleId" />
+      <result property="title" column="articleTitle" />
+      <result property="body" column="apushUserNamerticleBody" />
+      <association property="user" javaType="click.uploadSns.api.domain.models.Dtos.UserDto" resultMap="userData" />
+      <collection property="tags" ofType="click.uploadSns.api.domain.models.Dtos.TagDto" resultMap="tagData" />
+   </resultMap>
+
+   <resultMap id="userData" type="click.uploadSns.api.domain.models.Dtos.UserDto">
+      <id property="id" column="artUserId" />
+      <result property="name" column="artUserName" />
+      <result property="furigana" column="artUserFurigana" />
+      <result property="mail" column="artUserMail" />
+      <result property="telNo" column="artUserTelNo" />
+      <result property="password" column="artUserPassword" />
+      <result property="role" column="artUserRole" />
+      <result property="iconImagePath" column="artUserIconImagePath" />
+      <result property="comment" column="artUserComment" />
+   </resultMap>
+
+   <resultMap id="tagData" type="click.uploadSns.api.domain.models.Dtos.TagDto">
+      <id property="id" column="tagId" />
+      <result property="name" column="tagName" />
+      <result property="insertTime" column="tagInsertTime" />
+      <result property="updateTime" column="tagUpdateTime" />
+   </resultMap>
+
+   <select id="findAll" resultMap="SaveReplyMap">
+      SELECT
+         r.id,
+         r.comment,
+         r.parent_id,
+         to_char(r.insert_time, 'YYYY/MM/DD HH24:MI') as insert_Time,
+         u.id as userId,
+         u.name as userName,
+         u.furigana as userFurigana,
+         u.mail as userMail,
+         u.tel_no as userTelNo,
+         u.password as userPassWord,
+         u.role as userRole,
+         u.icon_image_path as userIconImagePath,
+         u.comment as userComment,
+         a.id as articleId,
+         a.title as articleTitle,
+         a.body as articleBody,
+         au.id as artUserId,
+         au.name as artUserName,
+         au.furigana as artUserFurigana,
+         au.mail as artUserMail,
+         au.tel_no as artUserTelNo,
+         au.password as artUserPassword,
+         au.role as artUserRole,
+         au.icon_image_path as artUserIconImagePath,
+         au.comment as artUserComment,
+         i.id as tagId,
+         i.name as tagName,
+         to_char(i.insert_time, 'YYYY/MM/DD HH24:MI') as tagInsertTime,
+         to_char(i.update_time, 'YYYY/MM/DD HH24:MI') as tagUpdateTime
+      FROM
+         upload_sns.reply r
+      INNER JOIN
+         upload_sns.user u
+      ON
+         u.id = r.user_id
+      INNER JOIN (
+         upload_sns.article a
+            INNER JOIN 
+               upload_sns.user au
+            ON
+               au.id = a.user_id
+            LEFT JOIN (
+               SELECT
+                     *
+               FROM
+                     upload_sns.article_use_tag aut
+               INNER JOIN
+                     upload_sns.tag t
+               ON
+                     aut.tag_id  = t.id
+            ) i
+      ON
+         i.article_id = a.id
+      )
+      ON
+         a.id = r.article_id
+   </select>
+
+   <select id="findById" resultMap="SaveReplyMap">
+      WITH
+      RECURSIVE
+      sample(id, comment, user_id, parent_id, insert_time, article_id) as (
+         SELECT
+            r.*
+         FROM
+            upload_sns.reply r
+         WHERE
+            r.id = #{id}
+         UNION ALL
+            SELECT
+               r.*
+            FROM
+               upload_sns.reply r, sample
+            WHERE
+               r.parent_id = sample.id
+      )
+      SELECT
+         s.id,
+         s.comment,
+         s.parent_id,
+         to_char(s.insert_time, 'YYYY/MM/DD HH24:MI') as insert_Time,
+         u.id as userId,
+         u.name as userName,
+         u.furigana as userFurigana,
+         u.mail as userMail,
+         u.tel_no as userTelNo,
+         u.password as userPassWord,
+         u.role as userRole,
+         u.icon_image_path as userIconImagePath,
+         u.comment as userComment,
+         a.id as articleId,
+         a.title as articleTitle,
+         a.body as articleBody,
+         au.id as artUserId,
+         au.name as artUserName,
+         au.furigana as artUserFurigana,
+         au.mail as artUserMail,
+         au.tel_no as artUserTelNo,
+         au.password as artUserPassword,
+         au.role as artUserRole,
+         au.icon_image_path as artUserIconImagePath,
+         au.comment as artUserComment,
+         i.id as tagId,
+         i.name as tagName,
+         to_char(i.insert_time, 'YYYY/MM/DD HH24:MI') as tagInsertTime,
+         to_char(i.update_time, 'YYYY/MM/DD HH24:MI') as tagUpdateTime
+      FROM
+         sample s
+      INNER JOIN
+         upload_sns.user u
+      ON
+        u.id = s.user_id
+      INNER JOIN (
+         upload_sns.article a
+            INNER JOIN 
+               upload_sns.user au
+            ON
+               au.id = a.user_id
+            LEFT JOIN (
+               SELECT
+               *
+               FROM
+               upload_sns.article_use_tag aut
+               INNER JOIN
+               upload_sns.tag t
+               ON
+               aut.tag_id  = t.id
+            ) i
+            ON
+            i.article_id = a.id
+      )
+      ON
+         a.id = s.article_id
+   </select>
+
+   <select id="findByArticleId" resultMap="SaveReplyMap">
+      SELECT
+         r.id,
+         r.comment,
+         r.parent_id,
+         to_char(r.insert_time, 'YYYY/MM/DD HH24:MI') as insert_Time,
+         u.id as userId,
+         u.name as userName,
+         u.furigana as userFurigana,
+         u.mail as userMail,
+         u.tel_no as userTelNo,
+         u.password as userPassWord,
+         u.role as userRole,
+         u.icon_image_path as userIconImagePath,
+         u.comment as userComment,
+         a.id as articleId,
+         a.title as articleTitle,
+         a.body as articleBody,
+         au.id as artUserId,
+         au.name as artUserName,
+         au.furigana as artUserFurigana,
+         au.mail as artUserMail,
+         au.tel_no as artUserTelNo,
+         au.password as artUserPassword,
+         au.role as artUserRole,
+         au.icon_image_path as artUserIconImagePath,
+         au.comment as artUserComment,
+         i.id as tagId,
+         i.name as tagName,
+         to_char(i.insert_time, 'YYYY/MM/DD HH24:MI') as tagInsertTime,
+         to_char(i.update_time, 'YYYY/MM/DD HH24:MI') as tagUpdateTime
+      FROM
+         upload_sns.reply r
+      INNER JOIN
+         upload_sns.user u
+      ON
+         u.id = r.user_id
+      INNER JOIN (
+         upload_sns.article a
+            INNER JOIN 
+               upload_sns.user au
+            ON
+               au.id = a.user_id
+            LEFT JOIN (
+               SELECT
+                     *
+               FROM
+                     upload_sns.article_use_tag aut
+               INNER JOIN
+                     upload_sns.tag t
+               ON
+                     aut.tag_id  = t.id
+            ) i
+      ON
+         i.article_id = a.id
+      )
+      ON
+         a.id = r.article_id
+      WHERE
+         r.article_id = #{articleId}
+   </select>
+
+   <insert id="insert"  parameterType = "click.uploadSns.api.domain.models.Reply" useGeneratedKeys="true" keyProperty="id">
+      INSERT INTO
+         upload_sns.reply(
+            comment,
+            user_id,
+            parent_id,
+            insert_time,
+            article_id
+         )
+      VALUES (
+         #{comment},
+         #{userId},
+         #{parentId},
+         now(),
+         #{articleId}
+      );
+   </insert>
+
+   <insert id="insertWithoutParent"  parameterType = "click.uploadSns.api.domain.models.Reply" useGeneratedKeys="true" keyProperty="id">
+      INSERT INTO
+         upload_sns.reply(
+            comment,
+            user_id,
+            insert_time,
+            article_id
+         )
+      VALUES (
+         #{comment},
+         #{userId},
+         now(),
+         #{articleId}
+      );
+   </insert>
+
+   <delete id="delete">
+      DELETE
+      FROM
+         upload_sns.reply
+      WHERE
+         id = #{id}
+   </delete>
+</mapper>

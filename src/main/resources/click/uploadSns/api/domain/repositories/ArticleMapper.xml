@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="click.uploadSns.api.domain.repositories.ArticleMapper">
+
+   <resultMap type="click.uploadSns.api.domain.models.Dtos.ArticleDto" id="ArticleDtoMap">
+      <id property="id" column="id" />
+      <result property="title" column="title"></result>
+      <result property="body" column="body"></result>
+      <result property="insertTime" column="insert_time"></result>
+      <result property="updateTime" column="update_time"></result>
+      <association property="user" javaType="click.uploadSns.api.domain.models.Dtos.UserDto" resultMap="userResult" />
+      <collection property="tags" ofType="click.uploadSns.api.domain.models.Dtos.TagDto" resultMap="tagResult" />
+   </resultMap>
+
+   <resultMap id="userResult" type="click.uploadSns.api.domain.models.Dtos.UserDto">
+      <id property="id" column="userId" />
+      <result property="name" column="userName" />
+      <result property="furigana" column="userFurigana" />
+      <result property="mail" column="userMail" />
+      <result property="telNo" column="userTelNo" />
+      <result property="password" column="userPassword" />
+      <result property="role" column="userRole" />
+      <result property="iconImagePath" column="userIconImagePath" />
+      <result property="comment" column="userComment" />
+   </resultMap>
+
+   <resultMap id="tagResult" type="click.uploadSns.api.domain.models.Dtos.TagDto">
+      <id property="id" column="tagId" />
+      <result property="name" column="tagName" />
+      <result property="insertTime" column="tagInsertTime" />
+      <result property="updateTime" column="tagUpdateTime" />
+   </resultMap>
+
+   <select id="findAll" resultMap="ArticleDtoMap">
+      SELECT
+         a.id,
+         a.title,
+         a.body,
+         to_char(a.insert_time, 'YYYY/MM/DD HH24:MI') as insert_Time,
+         to_char(a.update_time, 'YYYY/MM/DD HH24:MI') as update_Time,
+         u.id as userId,
+         u.name as userName,
+         u.furigana as userFurigana,
+         u.mail as userMail,
+         u.tel_no as userTelNo,
+         u.password as userPassword,
+         u.role as userRole,
+         u.icon_image_path as userIconImagePath,
+         u.comment as userComment,
+         i.id as tagId,
+         i.name as tagName,
+         to_char(i.insert_time, 'YYYY/MM/DD HH24:MI') as tagInsertTime,
+         to_char(i.update_time, 'YYYY/MM/DD HH24:MI') as tagUpdateTime
+      FROM
+         upload_sns.article a
+      INNER JOIN 
+         upload_sns.user u
+      ON
+         u.id = a.user_id
+      LEFT JOIN (
+         SELECT
+            *
+         FROM
+            upload_sns.article_use_tag aut
+         INNER JOIN
+            upload_sns.tag t
+         ON
+            aut.tag_id  = t.id
+      ) i
+      ON
+         i.article_id = a.id 
+   </select>
+
+   <select id="getTheLatest" resultMap="ArticleDtoMap">
+      SELECT
+         a.id,
+         a.title,
+         a.body,
+         to_char(a.insert_time, 'YYYY/MM/DD HH24:MI') as insert_Time,
+         to_char(a.update_time, 'YYYY/MM/DD HH24:MI') as update_Time,
+         u.id as userId,
+         u.name as userName,
+         u.furigana as userFurigana,
+         u.mail as userMail,
+         u.tel_no as userTelNo,
+         u.password as userPassword,
+         u.role as userRole,
+         u.icon_image_path as userIconImagePath,
+         u.comment as userComment,
+         i.id as tagId,
+         i.name as tagName,
+         to_char(i.insert_time, 'YYYY/MM/DD HH24:MI') as tagInsertTime,
+         to_char(i.update_time, 'YYYY/MM/DD HH24:MI') as tagUpdateTime
+      FROM
+         upload_sns.article a
+      INNER JOIN 
+         upload_sns.user u
+      ON
+         u.id = a.user_id
+      LEFT JOIN (
+         SELECT
+            *
+         FROM
+            upload_sns.article_use_tag aut
+         INNER JOIN
+            upload_sns.tag t
+         ON
+            aut.tag_id  = t.id
+      ) i
+      ON
+         i.article_id = a.id 
+      WHERE
+      a.insert_time >= cast(current_date as timestamp) + '-1 months'
+      ORDER BY 
+         a.id 
+      DESC
+   </select>
+
+   <select id="findById" resultMap="ArticleDtoMap">
+      SELECT
+         a.id,
+         a.title,
+         a.body,
+         to_char(a.insert_time, 'YYYY/MM/DD HH24:MI') as insert_Time,
+         to_char(a.update_time, 'YYYY/MM/DD HH24:MI') as update_Time,
+         u.id as userId,
+         u.name as userName,
+         u.furigana as userFurigana,
+         u.mail as userMail,
+         u.tel_no as userTelNo,
+         u.password as userPassword,
+         u.role as userRole,
+         u.icon_image_path as userIconImagePath,
+         u.comment as userComment,
+         i.id as tagId,
+         i.name as tagName,
+         to_char(i.insert_time, 'YYYY/MM/DD HH24:MI') as tagInsertTime,
+         to_char(i.update_time, 'YYYY/MM/DD HH24:MI') as tagUpdateTime
+      FROM
+         upload_sns.article a
+      INNER JOIN 
+         upload_sns.user u
+      ON
+         u.id = a.user_id
+      LEFT JOIN (
+         SELECT
+            *
+         FROM
+            upload_sns.article_use_tag aut
+         INNER JOIN
+            upload_sns.tag t
+         ON
+            aut.tag_id  = t.id
+      ) i
+      ON
+         i.article_id = #{id} 
+      WHERE
+         a.id = #{id}
+   </select>
+
+   <select id="findByUserId" resultMap="ArticleDtoMap">
+      SELECT
+         a.id,
+         a.title,
+         a.body,
+         to_char(a.insert_time, 'YYYY/MM/DD HH24:MI') as insert_Time,
+         to_char(a.update_time, 'YYYY/MM/DD HH24:MI') as update_Time,
+         u.id as userId,
+         u.name as userName,
+         u.furigana as userFurigana,
+         u.mail as userMail,
+         u.tel_no as userTelNo,
+         u.password as userPassword,
+         u.role as userRole,
+         u.icon_image_path as userIconImagePath,
+         u.comment as userComment,
+         i.id as tagId,
+         i.name as tagName,
+         to_char(i.insert_time, 'YYYY/MM/DD HH24:MI') as tagInsertTime,
+         to_char(i.update_time, 'YYYY/MM/DD HH24:MI') as tagUpdateTime
+      FROM
+         upload_sns.article a
+      INNER JOIN 
+         upload_sns.user u
+      ON
+         u.id = #{userId}
+      LEFT JOIN (
+         SELECT
+            *
+         FROM
+            upload_sns.article_use_tag aut
+         INNER JOIN
+            upload_sns.tag t
+         ON
+            aut.tag_id  = t.id
+      ) i
+      ON
+         i.article_id = a.id 
+      WHERE
+         a.user_id = #{userId}
+   </select>
+
+   <select id="searchByTitle" resultMap="ArticleDtoMap">
+      SELECT 
+         a.id,
+         a.title,
+         a.body,
+         to_char(a.insert_time, 'YYYY/MM/DD HH24:MI') as insert_Time,
+         to_char(a.update_time, 'YYYY/MM/DD HH24:MI') as update_Time,
+         u.id as userId,
+         u.name as userName,
+         u.furigana as userFurigana,
+         u.mail as userMail,
+         u.tel_no as userTelNo,
+         u.password as userPassword,
+         u.role as userRole,
+         u.icon_image_path as userIconImagePath,
+         u.comment as userComment,
+         i.id as tagId,
+         i.name as tagName,
+         to_char(i.insert_time, 'YYYY/MM/DD HH24:MI') as tagInsertTime,
+         to_char(i.update_time, 'YYYY/MM/DD HH24:MI') as tagUpdateTime 
+      FROM 
+         upload_sns.article a
+      INNER JOIN 
+         upload_sns.user u
+      ON
+         u.id = a.user_id
+      LEFT JOIN (
+         SELECT
+            *
+         FROM
+            upload_sns.article_use_tag aut
+         INNER JOIN
+            upload_sns.tag t
+         ON
+            aut.tag_id  = t.id
+      ) i
+      ON
+         i.article_id = a.id  
+      WHERE 
+         a.title 
+      ILIKE
+         '%${title}%'
+   </select>
+
+   <select id="searchByTagName" resultMap="ArticleDtoMap">
+      SELECT 
+         a.id,
+         a.title,
+         a.body,
+         to_char(a.insert_time, 'YYYY/MM/DD HH24:MI') as insert_Time,
+         to_char(a.update_time, 'YYYY/MM/DD HH24:MI') as update_Time,
+         u.id as userId,
+         u.name as userName,
+         u.furigana as userFurigana,
+         u.mail as userMail,
+         u.tel_no as userTelNo,
+         u.password as userPassword,
+         u.role as userRole,
+         u.icon_image_path as userIconImagePath,
+         u.comment as userComment,
+         i.id as tagId,
+         i.name as tagName,
+         to_char(i.insert_time, 'YYYY/MM/DD HH24:MI') as tagInsertTime,
+         to_char(i.update_time, 'YYYY/MM/DD HH24:MI') as tagUpdateTime 
+      FROM 
+         upload_sns.article a
+      INNER JOIN 
+         upload_sns.user u
+      ON
+         u.id = a.user_id
+      LEFT JOIN (
+         SELECT
+            *
+         FROM
+            upload_sns.article_use_tag aut
+         INNER JOIN
+            upload_sns.tag t
+         ON
+            aut.tag_id = t.id
+      ) i
+      ON
+         i.article_id = a.id  
+      WHERE 
+         i.name 
+      ILIKE   
+         #{tagName}
+   </select>
+
+   <insert id="insert" parameterType="click.uploadSns.api.domain.models.Article" useGeneratedKeys="true" keyProperty="id">
+      INSERT INTO
+         upload_sns.article (
+            title,
+            body,
+            user_id,
+            insert_time
+         )
+      VALUES (
+         #{title},
+         #{body},
+         #{userId},
+         now()
+      );
+   </insert>
+
+   <insert id="addTag">
+      INSERT INTO
+         upload_sns.article_use_tag (
+            article_id,
+            tag_id
+         )
+      VALUES (
+         #{articleId},
+         #{tagId}
+      );
+   </insert>
+
+   <delete id="deleteTag">
+      DELETE
+      FROM
+         upload_sns.article_use_tag
+      WHERE
+         article_id = #{articleId}
+   </delete>
+
+   <update id="update" parameterType="click.uploadSns.api.domain.models.Article">
+      UPDATE
+         upload_sns.article
+      SET
+         title = #{title}, 
+         body = #{body},
+         user_id = #{userId}, 
+         update_time = now()    
+      WHERE
+         id = #{id}
+   </update>
+
+   <delete id="delete">
+      DELETE
+      FROM
+         upload_sns.article
+      WHERE
+         id = #{id}
+   </delete>
+
+</mapper>

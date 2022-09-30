@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="click.uploadSns.api.domain.repositories.TagMapper">
+
+   <resultMap type="click.uploadSns.api.domain.models.Dtos.TagDto" id="TagMap">
+      <id property="id" column="id" />
+      <result property="name" column="name"></result>
+      <result property="insertTime" column="insert_time"></result>
+      <result property="updateTime" column="update_time"></result>
+   </resultMap>
+
+   <select id="findAll" resultMap="TagMap">
+      SELECT 
+         t.id,
+         t.name,
+         to_char(t.insert_time, 'YYYY/MM/DD HH24:MI') as insert_Time,
+         to_char(t.update_time, 'YYYY/MM/DD HH24:MI') as update_Time
+      FROM
+         upload_sns.tag t
+   </select>
+
+   <select id="findById" resultMap="TagMap">
+      SELECT 
+         t.id,
+         t.name,
+         to_char(t.insert_time, 'YYYY/MM/DD HH24:MI') as insert_Time,
+         to_char(t.update_time, 'YYYY/MM/DD HH24:MI') as update_Time
+      FROM
+         upload_sns.tag t
+      WHERE
+         id = #{id}
+   </select>
+
+   <insert id="insert"  parameterType = "click.uploadSns.api.domain.models.Tag" useGeneratedKeys="true" keyProperty="id">
+      INSERT INTO
+         upload_sns.tag (
+            name,
+            insert_time
+         )
+      VALUES (
+         #{name},
+         now()
+      );
+   </insert>
+
+   <update id="update" parameterType = "click.uploadSns.api.domain.models.Tag">
+      UPDATE
+         upload_sns.tag
+      SET
+         name = #{name},
+         update_time = now()
+      WHERE 
+         id = #{id}
+   </update>
+
+   <delete id="delete" parameterType="click.uploadSns.api.domain.models.Tag">
+      DELETE
+      FROM
+         upload_sns.tag 
+      WHERE
+         id = #{id}
+   </delete>
+
+</mapper>

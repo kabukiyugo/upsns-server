@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="click.uploadSns.api.domain.repositories.ImageMapper">
+
+   <resultMap type="click.uploadSns.api.domain.models.Dtos.ImageDto" id="ImageMap">
+      <id property="id" column="id" />
+      <result property="imageFilePath" column="image_file_path"></result>
+      <result property="insertTime" column="insert_time"></result>
+      <result property="updateTime" column="update_time"></result>
+      <association property="article" javaType="click.uploadSns.api.domain.models.Dtos.ArticleDto" resultMap="articleResult" />
+   </resultMap>
+
+   <resultMap id="articleResult" type="click.uploadSns.api.domain.models.Dtos.ArticleDto">
+      <id property="id" column="articleId" />
+      <result property="title" column="articleTitle" />
+      <result property="body" column="articleBody" />
+      <association property="user" javaType="click.uploadSns.api.domain.models.Dtos.UserDto" resultMap="userResult" />
+   </resultMap>
+
+   <resultMap id="userResult" type="click.uploadSns.api.domain.models.Dtos.UserDto">
+      <id property="id" column="userId" />
+      <result property="name" column="userName" />
+      <result property="furigana" column="userFurigana" />
+      <result property="mail" column="userMail" />
+      <result property="telNo" column="userTelNo" />
+      <result property="password" column="userPassword" />
+      <result property="role" column="userRole" />
+      <result property="comment" column="userComment" />
+   </resultMap>
+
+   <select id="findAll" resultMap="ImageMap">
+      SELECT 
+         img.id,
+         img.image_file_path,
+         to_char(img.insert_time, 'YYYY/MM/DD HH24:MI') as insert_Time,
+         to_char(img.update_time, 'YYYY/MM/DD HH24:MI') as update_Time,
+         a.id as articleId,
+         a.title as articleTitle,
+         a.body as articleBody,
+         u.id as userId,
+         u.name as userName,
+         u.furigana as userFurigana,
+         u.mail as userMail,
+         u.tel_no as userTelNo,
+         u.password as userPassword,
+         u.role as userRole,
+         u.icon_image_path as userIconImagePath,
+         u.comment as userComment,
+         i.id as tagId,
+         i.name as tagName,
+         to_char(i.insert_time, 'YYYY/MM/DD HH24:MI') as tagInsertTime,
+         to_char(i.update_time, 'YYYY/MM/DD HH24:MI') as tagUpdateTime
+      FROM 
+         upload_sns.image img
+      INNER JOIN (
+      upload_sns.article a
+        INNER JOIN 
+          upload_sns.user u
+        ON
+          u.id = a.user_id
+          LEFT JOIN (
+            SELECT
+                *
+            FROM
+                upload_sns.article_use_tag aut
+            INNER JOIN
+                upload_sns.tag t
+            ON
+                aut.tag_id  = t.id
+          ) i
+    ON
+      i.article_id = a.id
+    )
+    ON
+      a.id = img.article_id
+   </select>
+
+   <select id="findById" resultMap="ImageMap">
+      SELECT 
+         img.id,
+         img.image_file_path,
+         to_char(img.insert_time, 'YYYY/MM/DD HH24:MI') as insert_Time,
+         to_char(img.update_time, 'YYYY/MM/DD HH24:MI') as update_Time,
+         a.id as articleId,
+         a.title as articleTitle,
+         a.body as articleBody,
+         u.id as userId,
+         u.name as userName,
+         u.furigana as userFurigana,
+         u.mail as userMail,
+         u.tel_no as userTelNo,
+         u.password as userPassword,
+         u.role as userRole,
+         u.icon_image_path as userIconImagePath,
+         u.comment as userComment,
+         i.id as tagId,
+         i.name as tagName,
+         to_char(i.insert_time, 'YYYY/MM/DD HH24:MI') as tagInsertTime,
+         to_char(i.update_time, 'YYYY/MM/DD HH24:MI') as tagUpdateTime
+      FROM 
+         upload_sns.image img
+      INNER JOIN (
+      upload_sns.article a
+        INNER JOIN 
+          upload_sns.user u
+        ON
+          u.id = a.user_id
+          LEFT JOIN (
+            SELECT
+                *
+            FROM
+                upload_sns.article_use_tag aut
+            INNER JOIN
+                upload_sns.tag t
+            ON
+                aut.tag_id  = t.id
+          ) i
+      ON
+         i.article_id = a.id
+      )
+      ON
+         a.id = img.article_id
+      WHERE 
+         img.id = #{id}
+   </select>
+
+   <insert id="insert"  parameterType = "click.uploadSns.api.domain.models.Image" useGeneratedKeys = "true" keyProperty="id">
+      INSERT INTO 
+         upload_sns.image (
+            image_file_path,
+            article_id,
+            insert_time
+         )
+      VALUES (
+         #{imageFilePath},
+         #{articleId},
+         now()
+      );
+   </insert>
+
+   <update id="update" parameterType = "click.uploadSns.api.domain.models.Image">
+      UPDATE
+         upload_sns.image 
+      SET
+         image_file_path = #{imageFilePath},
+         article_id = #{articleId},
+         update_time = now()
+      WHERE 
+         id = #{id}
+   </update>
+
+   <delete id="delete">
+      DELETE 
+      FROM
+         upload_sns.image 
+      WHERE
+         id = #{id}
+   </delete>
+
+</mapper>
