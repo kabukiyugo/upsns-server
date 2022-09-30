@@ -12,19 +12,20 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import click.uploadSns.api.common.controllers.forms.ArticleForm;
+import click.uploadSns.api.common.controllers.forms.SearchForm;
 import click.uploadSns.api.domain.exceptions.InvalidInputException;
 import click.uploadSns.api.domain.models.Article;
 import click.uploadSns.api.domain.models.Dtos.ArticleDto;
+import click.uploadSns.api.domain.models.Dtos.DisplayDto;
 import click.uploadSns.api.domain.services.ArticleService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin
 @RequestMapping("/article")
 @RequiredArgsConstructor
 public class ArticleController {
@@ -42,24 +43,34 @@ public class ArticleController {
     return _articleService.findById(id);
   }
 
+  @GetMapping("/{id}/{userId}")
+  public DisplayDto getDisplayArt(@PathVariable("id") int id, @PathVariable("userId") int userId) {
+    return _articleService.findByTwoId(id, userId);
+  }
+
   @GetMapping("/user/{userId}")
   public List<ArticleDto> getByUserId(@PathVariable("userId") int userId) {
     return _articleService.findByUserId(userId);
   }
 
-  @GetMapping("/search/{term}")
-  public List<ArticleDto> searchBySwitching(@PathVariable("term") String term,
-      @RequestParam(name = "SearchType", required = true) int type) {
-    if (type == 0) {
-      return _articleService.searchByTagName(term);
-    } else {
-      return _articleService.searchByTitle(term);
-    }
+  // @GetMapping("/search/{term}")
+  // public List<ArticleDto> searchBySwitching(@PathVariable("term") String term,
+  // @RequestParam(name = "SearchType", required = true) int type) {
+  // if (type == 0) {
+  // return _articleService.searchByTagName(term);
+  // } else {
+  // return _articleService.searchByTitle(term);
+  // }
+  // }
+
+  @PostMapping("/search")
+  public List<DisplayDto> searchBySwitching(@RequestBody @Validated SearchForm searchForm) {
+    return _articleService.searchBySwitching(searchForm.getTerm(), searchForm.getType(), searchForm.getUserId());
   }
 
-  @GetMapping("/timeline")
-  public List<ArticleDto> getTheLatest() {
-    return _articleService.getTheLatest();
+  @GetMapping("/timeline/{userId}")
+  public List<DisplayDto> searchArtAndFav(@PathVariable("userId") int userId) {
+    return _articleService.searchArtAndFav(userId);
   }
 
   @PostMapping
@@ -69,7 +80,7 @@ public class ArticleController {
       throw new InvalidInputException("登録に失敗しました。");
     }
     Article article = new Article(articleForm.getId(), articleForm.getTitle(), articleForm.getBody(),
-        articleForm.getUserId(), articleForm.getTagIds());
+        articleForm.getUserId(), articleForm.getImageIds(), articleForm.getTagIds());
     return _articleService.insert(article);
   }
 
@@ -81,7 +92,7 @@ public class ArticleController {
       throw new InvalidInputException("アップデートに失敗しました。");
     }
     Article article = new Article(id, articleForm.getTitle(), articleForm.getBody(),
-        articleForm.getUserId(), articleForm.getTagIds());
+        articleForm.getUserId(), articleForm.getImageIds(), articleForm.getTagIds());
     return _articleService.update(article);
   }
 

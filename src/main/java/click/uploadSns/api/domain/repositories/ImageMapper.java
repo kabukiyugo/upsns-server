@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import click.uploadSns.api.domain.models.Image;
 import click.uploadSns.api.domain.models.Dtos.ImageDto;
@@ -15,10 +16,14 @@ public interface ImageMapper {
 
   Optional<ImageDto> findById(int id);
 
-  public void insert(Image image);
+  Optional<ImageDto> getTheLatest();
 
-  public void update(Image image);
+  Optional<ImageDto> findByName(@Param("name") String name);
+
+  public void insert(@Param("imageFilePaths") List<Image> imageFilePaths);
 
   public void delete(int id);
+
+  public void deleteByNames(@Param("names") List<String> names);
 
 }

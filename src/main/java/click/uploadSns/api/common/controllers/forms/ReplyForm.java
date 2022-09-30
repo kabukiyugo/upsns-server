@@ -7,7 +7,6 @@ import lombok.Data;
 @Data
 public class ReplyForm {
 
-  @NotNull
   private int id;
 
   @NotNull

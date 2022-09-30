@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import click.uploadSns.api.domain.models.Favorite;
 import click.uploadSns.api.domain.models.Dtos.FavoriteDto;
@@ -16,6 +17,8 @@ public interface FavoriteMapper {
   Optional<FavoriteDto> findById(int id);
 
   List<FavoriteDto> findByPushUserId(int userId);
+
+  Optional<FavoriteDto> findByIds(@Param("articleId") int articleId, @Param("pushUserId") int pushUserId);
 
   public void insert(Favorite favorite);
 

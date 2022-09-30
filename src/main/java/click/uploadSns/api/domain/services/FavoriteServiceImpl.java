@@ -37,6 +37,12 @@ public class FavoriteServiceImpl implements FavoriteService {
   }
 
   @Override
+  public FavoriteDto findByIds(int articleId, int pushUserId) {
+    Optional<FavoriteDto> favOpt = _favoriteMapper.findByIds(articleId, pushUserId);
+    return favOpt.get();
+  }
+
+  @Override
   public FavoriteDto insert(Favorite favorite) {
     _favoriteMapper.insert(favorite);
     return _favoriteMapper.findById(favorite.getId()).get();

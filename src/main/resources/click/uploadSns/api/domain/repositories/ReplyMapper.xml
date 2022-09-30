@@ -21,6 +21,7 @@
       <result property="role" column="userRole" />
       <result property="iconImagePath" column="userIconImagePath" />
       <result property="comment" column="userComment" />
+      <result property="cognitoId" column="userCognitoId" />
    </resultMap>
 
    <resultMap id="articleResult" type="click.uploadSns.api.domain.models.Dtos.ArticleDto">
@@ -41,6 +42,7 @@
       <result property="role" column="artUserRole" />
       <result property="iconImagePath" column="artUserIconImagePath" />
       <result property="comment" column="artUserComment" />
+      <result property="cognitoId" column="artUserCognitoId" />
    </resultMap>
 
    <resultMap id="tagData" type="click.uploadSns.api.domain.models.Dtos.TagDto">
@@ -65,6 +67,7 @@
          u.role as userRole,
          u.icon_image_path as userIconImagePath,
          u.comment as userComment,
+         u.cognito_id as userCognitoId,
          a.id as articleId,
          a.title as articleTitle,
          a.body as articleBody,
@@ -77,6 +80,7 @@
          au.role as artUserRole,
          au.icon_image_path as artUserIconImagePath,
          au.comment as artUserComment,
+         au.cognito_id as artUserCognitoId,
          i.id as tagId,
          i.name as tagName,
          to_char(i.insert_time, 'YYYY/MM/DD HH24:MI') as tagInsertTime,
@@ -142,6 +146,7 @@
          u.role as userRole,
          u.icon_image_path as userIconImagePath,
          u.comment as userComment,
+         u.cognito_id as userCognitoId,
          a.id as articleId,
          a.title as articleTitle,
          a.body as articleBody,
@@ -154,6 +159,7 @@
          au.role as artUserRole,
          au.icon_image_path as artUserIconImagePath,
          au.comment as artUserComment,
+         au.cognito_id as artUserCognitoId,
          i.id as tagId,
          i.name as tagName,
          to_char(i.insert_time, 'YYYY/MM/DD HH24:MI') as tagInsertTime,
@@ -202,6 +208,7 @@
          u.role as userRole,
          u.icon_image_path as userIconImagePath,
          u.comment as userComment,
+         u.cognito_id as userCognitoId,
          a.id as articleId,
          a.title as articleTitle,
          a.body as articleBody,
@@ -214,6 +221,7 @@
          au.role as artUserRole,
          au.icon_image_path as artUserIconImagePath,
          au.comment as artUserComment,
+         au.cognito_id as artUserCognitoId,
          i.id as tagId,
          i.name as tagName,
          to_char(i.insert_time, 'YYYY/MM/DD HH24:MI') as tagInsertTime,
@@ -249,6 +257,134 @@
          r.article_id = #{articleId}
    </select>
 
+   <select id="findByUserId" resultMap="SaveReplyMap">
+      SELECT
+         r.id,
+         r.comment,
+         r.parent_id,
+         to_char(r.insert_time, 'YYYY/MM/DD HH24:MI') as insert_Time,
+         u.id as userId,
+         u.name as userName,
+         u.furigana as userFurigana,
+         u.mail as userMail,
+         u.tel_no as userTelNo,
+         u.password as userPassWord,
+         u.role as userRole,
+         u.icon_image_path as userIconImagePath,
+         u.comment as userComment,
+         u.cognito_id as userCognitoId,
+         a.id as articleId,
+         a.title as articleTitle,
+         a.body as articleBody,
+         au.id as artUserId,
+         au.name as artUserName,
+         au.furigana as artUserFurigana,
+         au.mail as artUserMail,
+         au.tel_no as artUserTelNo,
+         au.password as artUserPassword,
+         au.role as artUserRole,
+         au.icon_image_path as artUserIconImagePath,
+         au.comment as artUserComment,
+         au.cognito_id as artUserCognitoId,
+         i.id as tagId,
+         i.name as tagName,
+         to_char(i.insert_time, 'YYYY/MM/DD HH24:MI') as tagInsertTime,
+         to_char(i.update_time, 'YYYY/MM/DD HH24:MI') as tagUpdateTime
+      FROM
+         upload_sns.reply r
+      INNER JOIN
+         upload_sns.user u
+      ON
+         u.id = r.user_id
+      INNER JOIN (
+         upload_sns.article a
+            INNER JOIN 
+               upload_sns.user au
+            ON
+               au.id = a.user_id
+            LEFT JOIN (
+               SELECT
+                     *
+               FROM
+                     upload_sns.article_use_tag aut
+               INNER JOIN
+                     upload_sns.tag t
+               ON
+                     aut.tag_id  = t.id
+            ) i
+      ON
+         i.article_id = a.id
+      )
+      ON
+         a.id = r.article_id
+      WHERE
+         r.user_id = #{userId}
+   </select>
+
+   <select id="findByParentId" resultMap="SaveReplyMap">
+      SELECT
+         r.id,
+         r.comment,
+         r.parent_id,
+         to_char(r.insert_time, 'YYYY/MM/DD HH24:MI') as insert_Time,
+         u.id as userId,
+         u.name as userName,
+         u.furigana as userFurigana,
+         u.mail as userMail,
+         u.tel_no as userTelNo,
+         u.password as userPassWord,
+         u.role as userRole,
+         u.icon_image_path as userIconImagePath,
+         u.comment as userComment,
+         u.cognito_id as userCognitoId,
+         a.id as articleId,
+         a.title as articleTitle,
+         a.body as articleBody,
+         au.id as artUserId,
+         au.name as artUserName,
+         au.furigana as artUserFurigana,
+         au.mail as artUserMail,
+         au.tel_no as artUserTelNo,
+         au.password as artUserPassword,
+         au.role as artUserRole,
+         au.icon_image_path as artUserIconImagePath,
+         au.comment as artUserComment,
+         au.cognito_id as artUserCognitoId,
+         i.id as tagId,
+         i.name as tagName,
+         to_char(i.insert_time, 'YYYY/MM/DD HH24:MI') as tagInsertTime,
+         to_char(i.update_time, 'YYYY/MM/DD HH24:MI') as tagUpdateTime
+      FROM
+         upload_sns.reply r
+      INNER JOIN
+         upload_sns.user u
+      ON
+         u.id = r.user_id
+      INNER JOIN (
+         upload_sns.article a
+            INNER JOIN 
+               upload_sns.user au
+            ON
+               au.id = a.user_id
+            LEFT JOIN (
+               SELECT
+                     *
+               FROM
+                     upload_sns.article_use_tag aut
+               INNER JOIN
+                     upload_sns.tag t
+               ON
+                     aut.tag_id  = t.id
+            ) i
+      ON
+         i.article_id = a.id
+      )
+      ON
+         a.id = r.article_id
+      WHERE
+         r.parent_id = #{parentId}
+   </select>
+
    <insert id="insert"  parameterType = "click.uploadSns.api.domain.models.Reply" useGeneratedKeys="true" keyProperty="id">
       INSERT INTO
          upload_sns.reply(
@@ -262,7 +398,7 @@
          #{comment},
          #{userId},
          #{parentId},
-         now(),
+         now() + cast('9 hours' as INTERVAL),
          #{articleId}
       );
    </insert>
@@ -278,7 +414,7 @@
       VALUES (
          #{comment},
          #{userId},
-         now(),
+         now() + cast('9 hours' as INTERVAL),
          #{articleId}
       );
    </insert>

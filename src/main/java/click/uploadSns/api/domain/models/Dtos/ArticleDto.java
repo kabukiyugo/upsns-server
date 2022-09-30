@@ -15,6 +15,8 @@ public class ArticleDto {
 
     private UserDto user;
 
+    private List<ImageDto> images;
+
     private List<TagDto> tags;
 
     private String insertTime;

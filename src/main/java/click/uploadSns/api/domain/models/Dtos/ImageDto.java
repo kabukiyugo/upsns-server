@@ -9,8 +9,6 @@ public class ImageDto {
 
     private String imageFilePath;
 
-    private ArticleDto article;
-
     private String insertTime;
 
     private String updateTime;

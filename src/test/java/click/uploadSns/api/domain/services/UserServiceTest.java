@@ -77,6 +77,20 @@ public class UserServiceTest {
   }
 
   @Test
+  public void findByVognitoIdTest() {
+
+    UserDto userDto = new UserDto();
+
+    when(_userMapper.findByCognitoId("Test-Name")).thenReturn(Optional.of(userDto));
+
+    UserDto resDto = _userServiceImpl.findByCognitoId("Test-Name");
+
+    verify(_userMapper, times(1)).findByCognitoId("Test-Name");
+
+    Assertions.assertEquals(userDto, resDto);
+  }
+
+  @Test
   public void insertTest() {
 
     User user = new User();

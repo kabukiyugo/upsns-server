@@ -29,6 +29,16 @@ public class UserMapperTest {
 
   @Test
   @Sql(scripts = { "classpath:DDL/schema.sql", "classpath:DML/data.sql" })
+  public void findAllTest() {
+    var res = this._userMapper.findAll();
+    Assertions.assertEquals(2, res.size());
+    res.forEach(usr -> {
+      Assertions.assertTrue(!usr.getName().isEmpty());
+    });
+  }
+
+  @Test
+  @Sql(scripts = { "classpath:DDL/schema.sql", "classpath:DML/data.sql" })
   public void findByUserNameTest() {
     var res1 = _userMapper.findByUserName("a");
     Assertions.assertTrue(res1.isEmpty());
@@ -39,12 +49,12 @@ public class UserMapperTest {
 
   @Test
   @Sql(scripts = { "classpath:DDL/schema.sql", "classpath:DML/data.sql" })
-  public void findAllTest() {
-    var res = this._userMapper.findAll();
-    Assertions.assertEquals(2, res.size());
-    res.forEach(usr -> {
-      Assertions.assertTrue(!usr.getName().isEmpty());
-    });
+  public void findByCognitoIdTest() {
+    var res1 = _userMapper.findByCognitoId("a");
+    Assertions.assertTrue(res1.isEmpty());
+    var res2 = _userMapper.findByCognitoId("Test-Name");
+    Assertions.assertTrue(res2.isPresent());
+    Assertions.assertTrue(!res2.get().getName().isEmpty());
   }
 
   @Test
@@ -57,6 +67,7 @@ public class UserMapperTest {
     input.setTelNo("SampleTelNo");
     input.setPassword("SamplePassword");
     input.setIconImagePath("SampleIconImagePath");
+    input.setCognitoId("SampleId");
     this._userMapper.insert(input);
     var res1 = this._userMapper.findById(input.getId());
     Assertions.assertTrue(res1.isPresent());
@@ -72,6 +83,7 @@ public class UserMapperTest {
     input.setTelNo("SampleTelNo");
     input.setPassword("SamplePassword");
     input.setIconImagePath("SampleIconImagePath");
+    input.setCognitoId("SampleId");
     this._userMapper.insert(input);
     var insertRes = this._userMapper.findById(input.getId());
     Assertions.assertTrue(insertRes.isPresent());
@@ -93,6 +105,7 @@ public class UserMapperTest {
     input.setTelNo("SampleTelNo");
     input.setPassword("SamplePassword");
     input.setIconImagePath("SampleIconImagePath");
+    input.setCognitoId("SampleId");
     this._userMapper.insert(input);
     var insertRes = this._userMapper.findById(input.getId());
     Assertions.assertTrue(insertRes.isPresent());

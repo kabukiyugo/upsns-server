@@ -4,9 +4,9 @@ DROP TABLE IF EXISTS upload_sns.article_use_tag;
 DROP TABLE IF EXISTS upload_sns.access_log;
 DROP TABLE IF EXISTS upload_sns.tag;
 DROP TABLE IF EXISTS upload_sns.favorite;
-DROP TABLE IF EXISTS upload_sns.image;
 DROP TABLE IF EXISTS upload_sns.reply;
 DROP TABLE IF EXISTS upload_sns.article;
+DROP TABLE IF EXISTS upload_sns.image;
 DROP TABLE IF EXISTS upload_sns.user;
 
 CREATE TABLE upload_sns.user (
@@ -21,7 +21,16 @@ CREATE TABLE upload_sns.user (
 	update_time timestamp NULL,
 	icon_image_path varchar(255) NOT NULL,
 	comment varchar(255) NULL,
+	cognito_id varchar(255) NOT NULL,
 	CONSTRAINT user_pk PRIMARY KEY (id)
+);
+
+CREATE TABLE upload_sns.image (
+	id serial NOT NULL AUTO_INCREMENT,
+	image_file_path varchar(255) NOT NULL,
+	insert_time timestamp NOT NULL,
+	update_time timestamp NULL,
+	CONSTRAINT images_pk PRIMARY KEY (id)
 );
 
 CREATE TABLE upload_sns.article (
@@ -31,7 +40,9 @@ CREATE TABLE upload_sns.article (
 	user_id int NOT NULL,
 	insert_time timestamp NOT NULL,
 	update_time timestamp NULL,
+	image_id int NULL,
 	CONSTRAINT articles_pk PRIMARY KEY (id),
+	CONSTRAINT article_fk_image_id FOREIGN KEY (image_id) REFERENCES upload_sns.image(id),
 	CONSTRAINT article_fk_user_id FOREIGN KEY (user_id) REFERENCES upload_sns.user(id) ON DELETE CASCADE
 );
 
@@ -44,16 +55,6 @@ CREATE TABLE upload_sns.favorite (
 	CONSTRAINT favorite_pk PRIMARY KEY (id),
 	CONSTRAINT favorite_fk_article_id FOREIGN KEY (article_id) REFERENCES upload_sns.article(id) ON DELETE CASCADE,
 	CONSTRAINT favorite_fk_push_user_id FOREIGN KEY (push_user_id) REFERENCES upload_sns.user(id) ON DELETE CASCADE
-);
-
-CREATE TABLE upload_sns.image (
-	id serial NOT NULL AUTO_INCREMENT,
-	image_file_path varchar(255) NOT NULL,
-	insert_time timestamp NOT NULL,
-	update_time timestamp NULL,
-	article_id int NOT NULL,
-	CONSTRAINT images_pk PRIMARY KEY (id),
-	CONSTRAINT image_fk_article_id FOREIGN KEY (article_id) REFERENCES upload_sns.article(id) ON DELETE CASCADE
 );
 
 CREATE TABLE upload_sns.reply (

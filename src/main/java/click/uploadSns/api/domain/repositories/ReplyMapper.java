@@ -17,6 +17,10 @@ public interface ReplyMapper {
 
     List<SaveReplyDataDto> findByArticleId(int articleId);
 
+    List<SaveReplyDataDto> findByUserId(int userId);
+
+    List<SaveReplyDataDto> findByParentId(int parentId);
+
     public void insert(Reply reply);
 
     public void insertWithoutParent(Reply reply);

@@ -13,7 +13,7 @@ public interface TagService {
 
     TagDto insert(Tag tag);
 
-    TagDto update(Tag tag);
+    List<TagDto> insertTags(List<Tag> tags);
 
     int delete(int id);
 

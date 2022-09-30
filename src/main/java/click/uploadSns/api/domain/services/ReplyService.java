@@ -13,6 +13,10 @@ public interface ReplyService {
 
   List<ReplyDto> findByArticleId(int articleId);
 
+  List<ReplyDto> findByUserId(int userId);
+
+  List<ReplyDto> findNotification(int userId);
+
   ReplyDto insert(Reply reply);
 
   int delete(int id);

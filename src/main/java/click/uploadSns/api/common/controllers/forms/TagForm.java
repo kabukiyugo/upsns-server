@@ -7,7 +7,6 @@ import lombok.Data;
 @Data
 public class TagForm {
 
-    @NotNull
     private int id;
 
     @NotNull

@@ -1,6 +1,7 @@
 package click.uploadSns.api.common.controllers;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -9,7 +10,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,7 +23,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin
 @RequestMapping("/tag")
 @RequiredArgsConstructor
 public class TagController {
@@ -51,14 +51,12 @@ public class TagController {
     return _tagService.insert(tag);
   }
 
-  @PutMapping("/{id}")
-  public TagDto put(@PathVariable("id") int id, @RequestBody @Validated TagForm tagForm, BindingResult result)
+  @PostMapping("/all")
+  public List<TagDto> postTags(@RequestBody List<TagForm> tagForms)
       throws InvalidInputException {
-    if (result.hasErrors()) {
-      throw new InvalidInputException("アップデートに失敗しました。");
-    }
-    Tag tag = new Tag(id, tagForm.getName());
-    return _tagService.update(tag);
+    List<Tag> tags = tagForms.stream().map(tagForm -> new Tag(tagForm.getId(), tagForm.getName()))
+        .collect(Collectors.toList());
+    return _tagService.insertTags(tags);
   }
 
   @DeleteMapping("/{id}")

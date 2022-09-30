@@ -4,3 +4,12 @@ spring:
     driverClassName: org.postgresql.Driver
     username: postgres
     password: postgres
+logging:
+  level:
+    org:
+      springframework: WARN
+    click:
+      uploadSns:
+        api:
+          domain:
+            repository: DEBUG

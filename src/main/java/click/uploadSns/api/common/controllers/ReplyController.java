@@ -22,7 +22,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin
 @RequestMapping("/reply")
 @RequiredArgsConstructor
 public class ReplyController {
@@ -43,6 +43,11 @@ public class ReplyController {
   @GetMapping("/search/{articleId}")
   public List<ReplyDto> getArticle(@PathVariable("articleId") int articleId) {
     return _replyService.findByArticleId(articleId);
+  }
+
+  @GetMapping("/notification/{userId}")
+  public List<ReplyDto> notification(@PathVariable("userId") int userId) {
+    return _replyService.findNotification(userId);
   }
 
   @PostMapping

@@ -35,4 +35,6 @@ public class User {
 
   private String comment;
 
+  private String cognitoId;
+
 }

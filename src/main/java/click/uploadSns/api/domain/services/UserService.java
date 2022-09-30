@@ -19,4 +19,6 @@ public interface UserService {
 
     UserDto findByUserName(String username);
 
+    UserDto findByCognitoId(String cognitoId);
+
 }

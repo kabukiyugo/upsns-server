@@ -7,7 +7,6 @@ import lombok.Data;
 @Data
 public class UserForm {
 
-    @NotNull
     private int id;
 
     @NotNull
@@ -31,5 +30,7 @@ public class UserForm {
     private String iconImagePath;
 
     private String comment;
+
+    private String cognitoId;
 
 }

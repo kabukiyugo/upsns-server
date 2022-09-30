@@ -1,5 +1,6 @@
 package click.uploadSns.api.domain.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,9 +39,14 @@ public class TagServiceImpl implements TagService {
   }
 
   @Override
-  public TagDto update(Tag tag) {
-    _tagMapper.update(tag);
-    return _tagMapper.findById(tag.getId()).get();
+  public List<TagDto> insertTags(List<Tag> tags) {
+    _tagMapper.insertTags(tags);
+    List<TagDto> resList = new ArrayList<>();
+    for (Tag tag : tags) {
+      _tagMapper.insert(tag);
+      resList.add(_tagMapper.findById(tag.getId()).get());
+    }
+    return resList;
   }
 
   @Override

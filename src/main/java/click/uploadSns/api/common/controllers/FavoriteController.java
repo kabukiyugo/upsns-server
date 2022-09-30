@@ -23,7 +23,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin 
 @RequestMapping("/favorite")
 @RequiredArgsConstructor
 public class FavoriteController {
@@ -44,6 +44,11 @@ public class FavoriteController {
   @GetMapping("/pushArtcles/{userId}")
   public List<FavoriteDto> getByPushUser(@PathVariable("userId") int userId) {
     return _favoriteService.findByPushUserId(userId);
+  }
+
+  @GetMapping("/seachByIds/{articleId}/{pushUserId}")
+  public FavoriteDto getByIds(@PathVariable("articleId") int articleId, @PathVariable("pushUserId") int pushUserId) {
+    return _favoriteService.findByIds(articleId, pushUserId);
   }
 
   @PostMapping

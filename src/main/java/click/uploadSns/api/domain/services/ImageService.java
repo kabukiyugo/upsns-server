@@ -2,7 +2,6 @@ package click.uploadSns.api.domain.services;
 
 import java.util.List;
 
-import click.uploadSns.api.domain.models.Image;
 import click.uploadSns.api.domain.models.Dtos.ImageDto;
 
 public interface ImageService {
@@ -11,10 +10,14 @@ public interface ImageService {
 
     ImageDto findById(int id);
 
-    ImageDto insert(Image image);
+    ImageDto getTheLatest();
 
-    ImageDto update(Image image);
+    ImageDto findByName(String name);
+
+    List<Integer> insert(List<String> imageFilePaths);
 
     int delete(int id);
+
+    List<String> deleteByNames(List<String> names);
 
 }

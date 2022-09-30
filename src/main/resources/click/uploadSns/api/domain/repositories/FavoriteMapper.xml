@@ -19,6 +19,7 @@
     <result property="password" column="pushUserPassword" />
     <result property="role" column="pushUserRole" />
     <result property="iconImagePath" column="pushUserIconImagePath" />
+    <result property="cognitoId" column="pushUserCognitoId" />
   </resultMap>
 
   <resultMap id="articleResult" type="click.uploadSns.api.domain.models.Dtos.ArticleDto">
@@ -38,6 +39,7 @@
     <result property="password" column="userPassword" />
     <result property="role" column="userRole" />
     <result property="iconImagePath" column="userIconImagePath" />
+    <result property="cognitoId" column="userCognitoId" />
   </resultMap>
 
   <resultMap id="tagResult" type="click.uploadSns.api.domain.models.Dtos.TagDto">
@@ -61,6 +63,7 @@
       p.role as pushUserRole,
       p.icon_image_path as pushUserIconImagePath,
       p.comment as pushUserComment,
+      p.cognito_id as pushUserCognitoId,
       a.id as articleId,
       a.title as articleTitle,
       a.body as articleBody,
@@ -73,6 +76,7 @@
       u.role as userRole,
       u.icon_image_path as userIconImagePath,
       u.comment as userComment,
+      u.cognito_id as userCognitoId,
       i.id as tagId,
       i.name as tagName,
       to_char(i.insert_time, 'YYYY/MM/DD HH24:MI') as tagInsertTime,
@@ -120,6 +124,7 @@
       p.role as pushUserRole,
       p.icon_image_path as pushUserIconImagePath,
       p.comment as pushUserComment,
+      p.cognito_id as pushUserCognitoId,
       a.id as articleId,
       a.title as articleTitle,
       a.body as articleBody,
@@ -132,6 +137,7 @@
       u.role as userRole,
       u.icon_image_path as userIconImagePath,
       u.comment as userComment,
+      u.cognito_id as userCognitoId,
       i.id as tagId,
       i.name as tagName,
       to_char(i.insert_time, 'YYYY/MM/DD HH24:MI') as tagInsertTime,
@@ -181,6 +187,7 @@
       p.role as pushUserRole,
       p.icon_image_path as pushUserIconImagePath,
       p.comment as pushUserComment,
+      p.cognito_id as pushUserCognitoId,
       a.id as articleId,
       a.title as articleTitle,
       a.body as articleBody,
@@ -193,7 +200,7 @@
       u.role as userRole,
       u.icon_image_path as userIconImagePath,
       u.comment as userComment,
-      i.id as tagId,
+      u.cognito_id as userCognitoId,
       i.name as tagName,
       to_char(i.insert_time, 'YYYY/MM/DD HH24:MI') as tagInsertTime,
       to_char(i.update_time, 'YYYY/MM/DD HH24:MI') as tagUpdateTime
@@ -226,6 +233,74 @@
       a.id = f.article_id
     WHERE
       f.push_user_id = #{userId}
+    ORDER BY 
+      f.insert_time
+    DESC
+  </select>
+
+  <select id="findByIds" resultMap="FavoriteMap">
+  SELECT
+      f.id,
+      to_char(f.insert_time, 'YYYY/MM/DD HH24:MI') as insert_Time,
+      to_char(f.update_time, 'YYYY/MM/DD HH24:MI') as update_Time,
+      p.id as pushUserId,
+      p.name as pushUserName,
+      p.furigana as pushUserFurigana,
+      p.mail as pushUserMail,
+      p.tel_no as pushUserTelNo,
+      p.password as pushUserPassword,
+      p.role as pushUserRole,
+      p.icon_image_path as pushUserIconImagePath,
+      p.comment as pushUserComment,
+      p.cognito_id as pushUserCognitoId,
+      a.id as articleId,
+      a.title as articleTitle,
+      a.body as articleBody,
+      u.id as userId,
+      u.name as userName,
+      u.furigana as userFurigana,
+      u.mail as userMail,
+      u.tel_no as userTelNo,
+      u.password as userPassword,
+      u.role as userRole,
+      u.icon_image_path as userIconImagePath,
+      u.comment as userComment,
+      u.cognito_id as userCognitoId,
+      i.id as tagId,
+      i.name as tagName,
+      to_char(i.insert_time, 'YYYY/MM/DD HH24:MI') as tagInsertTime,
+      to_char(i.update_time, 'YYYY/MM/DD HH24:MI') as tagUpdateTime
+    FROM
+      upload_sns.favorite f
+    INNER JOIN
+      upload_sns.user p
+    ON
+      p.id = f.push_user_id
+    INNER JOIN (
+      upload_sns.article a
+        INNER JOIN 
+          upload_sns.user u
+        ON
+          u.id = a.user_id
+          LEFT JOIN (
+            SELECT
+                *
+            FROM
+                upload_sns.article_use_tag aut
+            INNER JOIN
+                upload_sns.tag t
+            ON
+                aut.tag_id  = t.id
+          ) i
+    ON
+      i.article_id = a.id
+    )
+    ON
+      a.id = f.article_id
+    WHERE
+      f.article_id = #{articleId}
+    AND
+      f.push_user_id = #{pushUserId}
   </select>
 
   <insert id="insert"  parameterType = "click.uploadSns.api.domain.models.Favorite" useGeneratedKeys="true" keyProperty="id">
@@ -238,7 +313,7 @@
     VALUES (
       #{pushUserId},
       #{articleId},
-      now()
+      now() + cast('9 hours' as INTERVAL)
     );
   </insert>
 
@@ -248,7 +323,7 @@
     SET
       push_user_id = #{pushUserId}, 
       article_id = #{articleId},
-      update_time =now()
+      update_time = now() + cast('9 hours' as INTERVAL)
     WHERE 
       id = #{id}
   </update>

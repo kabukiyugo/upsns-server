@@ -30,7 +30,11 @@ public interface ArticleMapper {
 
         public void delete(int id);
 
+        public void addImage(@Param("articleId") int articleId, @Param("imageId") int imageId);
+
         public void addTag(@Param("articleId") int articleId, @Param("tagId") int tagId);
+
+        public void deleteImage(int id);
 
         public void deleteTag(int id);
 

@@ -38,6 +38,12 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
+  public UserDto findByCognitoId(String cognitoId) {
+    Optional<UserDto> userOpt = _userMapper.findByCognitoId(cognitoId);
+    return userOpt.get();
+  }
+
+  @Override
   public UserDto insert(User user) {
     _userMapper.insert(user);
     return _userMapper.findById(user.getId()).get();

@@ -25,7 +25,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin 
 @RequestMapping("/user")
 @RequiredArgsConstructor
 public class UserController {
@@ -43,6 +43,11 @@ public class UserController {
     return _userService.findById(id);
   }
 
+  @GetMapping("/cognitoId/{cognitoId}")
+  public UserDto getByCognitoId(@PathVariable("cognitoId") String cognitoId) {
+    return _userService.findByCognitoId(cognitoId);
+  }
+
   // @GetMapping("/{name}") // postmanで検証中だけどやり方わからん
   // public UserDto get(@PathVariable("name") String username) {
   // return _userService.findByUserName(username);
@@ -58,7 +63,7 @@ public class UserController {
         userForm.getFurigana(),
         userForm.getMail(), userForm.getTelNo(), userForm.getPassword(),
         userForm.getRole(),
-        userForm.getIconImagePath(), userForm.getComment());
+        userForm.getIconImagePath(), userForm.getComment(), userForm.getCognitoId());
     // ここにエンコードの記述してハッシュ化？vueとcognitoだからいらない、パスワードもいらない
     return _userService.insert(user);
   }
@@ -72,7 +77,7 @@ public class UserController {
     User user = new User(id, userForm.getName(), userForm.getFurigana(),
         userForm.getMail(), userForm.getTelNo(), userForm.getPassword(),
         userForm.getRole(),
-        userForm.getIconImagePath(), userForm.getComment());
+        userForm.getIconImagePath(), userForm.getComment(), userForm.getCognitoId());
 
     return _userService.update(user);
   }

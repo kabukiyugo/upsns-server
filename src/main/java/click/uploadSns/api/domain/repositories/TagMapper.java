@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import click.uploadSns.api.domain.models.Tag;
 import click.uploadSns.api.domain.models.Dtos.TagDto;
@@ -17,7 +18,7 @@ public interface TagMapper {
 
   public void insert(Tag tag);
 
-  public void update(Tag tag);
+  public void insertTags(@Param("tags") List<Tag> tags);
 
   public void delete(int id);
 

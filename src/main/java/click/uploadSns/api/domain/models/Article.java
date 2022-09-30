@@ -19,6 +19,8 @@ public class Article {
 
   private int userId;
 
+  private List<Integer> imageIds;
+
   private List<Integer> tagIds;
 
 }

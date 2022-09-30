@@ -21,6 +21,8 @@ public interface UserMapper {
 
     public void delete(int id);
 
-    public Optional<UserDto> findByUserName(String username);
+    public Optional<UserDto> findByUserName(String userName);
+
+    public Optional<UserDto> findByCognitoId(String cognitoId);
 
 }

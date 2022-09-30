@@ -27,4 +27,6 @@ public class UserDto {
 
     private String comment;
 
+    private String cognitoId;
+
 }

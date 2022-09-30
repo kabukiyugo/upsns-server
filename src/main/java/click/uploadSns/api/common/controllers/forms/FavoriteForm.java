@@ -7,12 +7,11 @@ import lombok.Data;
 @Data
 public class FavoriteForm {
 
-    @NotNull
     private int id;
 
     @NotNull
     private int pushUserId;
-  
+
     @NotNull
     private int articleId;
 }

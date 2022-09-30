@@ -13,6 +13,8 @@ public interface FavoriteService {
 
     List<FavoriteDto> findByPushUserId(int userId);
 
+    FavoriteDto findByIds(int articleId, int pushUserId);
+
     FavoriteDto insert(Favorite favorite);
 
     FavoriteDto update(Favorite favorite);

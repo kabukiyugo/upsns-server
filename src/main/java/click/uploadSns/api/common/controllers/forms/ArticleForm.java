@@ -9,7 +9,6 @@ import lombok.Data;
 @Data
 public class ArticleForm {
 
-  @NotNull
   private int id;
 
   @NotNull
@@ -20,6 +19,8 @@ public class ArticleForm {
 
   @NotNull
   private int userId;
+
+  private List<Integer> imageIds;
 
   private List<Integer> tagIds;
 

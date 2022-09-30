@@ -14,6 +14,7 @@
     <result property="updateTime" column="update_time"></result>
     <result property="iconImagePath" column="icon_image_path"></result>
     <result property="comment" column="comment"></result>
+    <result property="cognitoId" column="cognito_id"></result>
   </resultMap>
 
   <select id="findAll" resultMap="UserMap">
@@ -28,7 +29,8 @@
       to_char(insert_time , 'YYYY/MM/DD HH24:MI') as insert_Time,
       to_char(update_time , 'YYYY/MM/DD HH24:MI') as update_Time,
       icon_image_path,
-      comment
+      comment,
+      cognito_id
     FROM
       upload_sns.user
   </select>
@@ -45,7 +47,8 @@
       to_char(insert_time , 'YYYY/MM/DD HH24:MI') as insert_Time,
       to_char(update_time , 'YYYY/MM/DD HH24:MI') as update_Time,
       icon_image_path,
-      comment
+      comment,
+      cognito_id
     FROM
       upload_sns.user
     WHERE
@@ -64,12 +67,34 @@
       insert_time,
       update_time,
       icon_image_path,
-      comment
+      comment,
+      cognito_id
     FROM
       upload_sns.user
     WHERE
       name = #{name}
   </select>
+
+  <select id="findByCognitoId" resultMap="UserMap">
+    SELECT 
+      id,
+      name,
+      furigana,
+      mail,
+      tel_no,
+      password,
+      role,
+      insert_time,
+      update_time,
+      icon_image_path,
+      comment,
+      cognito_id
+    FROM
+      upload_sns.user
+    WHERE
+      cognito_id = #{cognitoId}
+  </select>
+
 
 
   <insert id="insert"  parameterType = "click.uploadSns.api.domain.models.User" useGeneratedKeys="true" keyProperty="id">
@@ -83,7 +108,8 @@
         role,
         insert_time,
         icon_image_path,
-        comment
+        comment,
+        cognito_id
       )
     VALUES (
       #{name},
@@ -92,9 +118,10 @@
       #{telNo},
       #{password},
       #{role},
-      now(),
+      now() + cast('9 hours' as INTERVAL),
       #{iconImagePath},
-      #{comment}
+      #{comment},
+      #{cognitoId}
     );
   </insert>
 
@@ -108,14 +135,15 @@
       tel_no = #{telNo},
       password = #{password},
       role = #{role} ,
-      update_time = now(),
+      update_time = now() + cast('9 hours' as INTERVAL),
       icon_image_path = #{iconImagePath},
-      comment = #{comment}
+      comment = #{comment},
+      cognito_id = #{cognitoId}
     WHERE 
       id = #{id}
   </update>
 
-  <delete id="delete" parameterType="click.uploadSns.api.domain.models.User">
+  <delete id="delete">
       DELETE
       FROM
         upload_sns.user

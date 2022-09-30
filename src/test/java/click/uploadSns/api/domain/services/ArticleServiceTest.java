@@ -1,229 +1,247 @@
-package click.uploadSns.api.domain.services;
+// package click.uploadSns.api.domain.services;
 
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+// import static org.mockito.Mockito.doNothing;
+// import static org.mockito.Mockito.times;
+// import static org.mockito.Mockito.verify;
+// import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+// import java.util.ArrayList;
+// import java.util.List;
+// import java.util.Optional;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mybatis.spring.boot.test.autoconfigure.MybatisTest;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+// import org.junit.jupiter.api.Assertions;
+// import org.junit.jupiter.api.Test;
+// import org.junit.jupiter.api.extension.ExtendWith;
+// import org.mockito.InjectMocks;
+// import org.mockito.Mock;
+// import org.mybatis.spring.boot.test.autoconfigure.MybatisTest;
+// import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import click.uploadSns.api.domain.models.Article;
-import click.uploadSns.api.domain.models.Tag;
-import click.uploadSns.api.domain.models.Dtos.ArticleDto;
-import click.uploadSns.api.domain.models.Dtos.TagDto;
-import click.uploadSns.api.domain.repositories.ArticleMapper;
+// import click.uploadSns.api.domain.models.Article;
+// import click.uploadSns.api.domain.models.Tag;
+// import click.uploadSns.api.domain.models.Dtos.ArticleDto;
+// import click.uploadSns.api.domain.models.Dtos.DisplayDto;
+// import click.uploadSns.api.domain.models.Dtos.FavoriteDto;
+// import click.uploadSns.api.domain.models.Dtos.TagDto;
+// import click.uploadSns.api.domain.repositories.ArticleMapper;
+// import click.uploadSns.api.domain.repositories.FavoriteMapper;
 
-@ExtendWith(SpringExtension.class)
-@MybatisTest
-public class ArticleServiceTest {
+// @ExtendWith(SpringExtension.class)
+// @MybatisTest
+// public class ArticleServiceTest {
 
-  @Mock
-  private ArticleMapper _articleMapper;
+// @Mock
+// private ArticleMapper _articleMapper;
 
-  @InjectMocks
-  private ArticleServiceImpl _articleServiceImpl;
+// @Mock
+// private FavoriteMapper _favoriteMapper;
 
-  @Test
-  public void findAllTest() {
+// @InjectMocks
+// private ArticleServiceImpl _articleServiceImpl;
 
-    List<ArticleDto> mockList = new ArrayList<>();
-    ArticleDto articleDto = new ArticleDto();
-    mockList.add(articleDto);
-    mockList.add(articleDto);
+// @Test
+// public void findAllTest() {
 
-    when(_articleMapper.findAll()).thenReturn(mockList);
+// List<ArticleDto> mockList = new ArrayList<>();
+// ArticleDto articleDto = new ArticleDto();
+// mockList.add(articleDto);
+// mockList.add(articleDto);
 
-    List<ArticleDto> resList = _articleServiceImpl.findAll();
+// when(_articleMapper.findAll()).thenReturn(mockList);
 
-    verify(_articleMapper, times(1)).findAll();
+// List<ArticleDto> resList = _articleServiceImpl.findAll();
 
-    Assertions.assertEquals(mockList.size(), resList.size());
-  }
+// verify(_articleMapper, times(1)).findAll();
 
-  @Test
-  public void findByIdTest() {
+// Assertions.assertEquals(mockList.size(), resList.size());
+// }
 
-    ArticleDto artDto = new ArticleDto();
+// @Test
+// public void findByIdTest() {
 
-    when(_articleMapper.findById(123)).thenReturn(Optional.of(artDto));
+// ArticleDto artDto = new ArticleDto();
 
-    ArticleDto resDto = _articleServiceImpl.findById(123);
+// when(_articleMapper.findById(123)).thenReturn(Optional.of(artDto));
 
-    verify(_articleMapper, times(1)).findById(123);
+// ArticleDto resDto = _articleServiceImpl.findById(123);
 
-    Assertions.assertEquals(artDto, resDto);
-  }
+// verify(_articleMapper, times(1)).findById(123);
 
-  @Test
-  public void getTheLatestTest() {
+// Assertions.assertEquals(artDto, resDto);
+// }
 
-    List<ArticleDto> mockList = new ArrayList<>();
-    ArticleDto articleDto = new ArticleDto();
-    mockList.add(articleDto);
-    mockList.add(articleDto);
+// @Test
+// public void searchArtAndFavTest() {
 
-    when(_articleMapper.getTheLatest()).thenReturn(mockList);
+// List<ArticleDto> artList = new ArrayList<>();
+// ArticleDto articleDto = new ArticleDto();
+// articleDto.setId(111);
+// artList.add(articleDto);
 
-    List<ArticleDto> resList = _articleServiceImpl.getTheLatest();
+// List<FavoriteDto> favList = new ArrayList<>();
+// FavoriteDto favoriteDto = new FavoriteDto();
+// favoriteDto.setArticle(articleDto);
+// favList.add(favoriteDto);
 
-    verify(_articleMapper, times(1)).getTheLatest();
+// when(_articleMapper.getTheLatest()).thenReturn(artList);
 
-    Assertions.assertEquals(mockList.size(), resList.size());
-  }
+// when(_favoriteMapper.findByPushUserId(111)).thenReturn(favList);
 
-  @Test
-  public void findByUserIdTest() {
+// List<DisplayDto> resList = _articleServiceImpl.searchArtAndFav(111);
 
-    List<ArticleDto> artList = new ArrayList<>();
+// verify(_articleMapper, times(1)).getTheLatest();
 
-    ArticleDto articleDto = new ArticleDto();
-    artList.add(articleDto);
+// verify(_favoriteMapper, times(1)).findByPushUserId(111);
 
-    when(_articleMapper.findByUserId(123)).thenReturn(artList);
+// Assertions.assertEquals(111, resList.get(0).getArticle().getId());
 
-    List<ArticleDto> resList = _articleServiceImpl.findByUserId(123);
+// }
 
-    verify(_articleMapper, times(1)).findByUserId(123);
+// @Test
+// public void findByUserIdTest() {
 
-    Assertions.assertEquals(artList.size(), resList.size());
-  }
+// List<ArticleDto> artList = new ArrayList<>();
 
-  @Test
-  public void searchByTitle() {
+// ArticleDto articleDto = new ArticleDto();
+// artList.add(articleDto);
 
-    List<ArticleDto> artList = new ArrayList<>();
+// when(_articleMapper.findByUserId(123)).thenReturn(artList);
 
-    ArticleDto articleDto = new ArticleDto();
-    articleDto.setTitle("aaa");
-    artList.add(articleDto);
+// List<ArticleDto> resList = _articleServiceImpl.findByUserId(123);
 
-    when(_articleMapper.searchByTitle("aaa")).thenReturn(artList);
+// verify(_articleMapper, times(1)).findByUserId(123);
 
-    List<ArticleDto> resList = _articleServiceImpl.searchByTitle("aaa");
+// Assertions.assertEquals(artList.size(), resList.size());
+// }
 
-    verify(_articleMapper, times(1)).searchByTitle("aaa");
+// @Test
+// public void searchByTitle() {
 
-    Assertions.assertEquals(artList.get(0).getTitle(), resList.get(0).getTitle());
-  }
+// List<ArticleDto> artList = new ArrayList<>();
 
-  @Test
-  public void searchByTagNameTest() {
+// ArticleDto articleDto = new ArticleDto();
+// articleDto.setTitle("aaa");
+// artList.add(articleDto);
 
-    List<ArticleDto> artList = new ArrayList<>();
-    ArticleDto articleDto = new ArticleDto();
-    List<TagDto> tagList = new ArrayList<>();
-    TagDto tagDto = new TagDto();
-    tagDto.setName("aaa");
-    tagList.add(tagDto);
-    articleDto.setTags(tagList);
-    artList.add(articleDto);
+// when(_articleMapper.searchByTitle("aaa")).thenReturn(artList);
 
-    when(_articleMapper.searchByTagName("aaa")).thenReturn(artList);
+// List<ArticleDto> resList = _articleServiceImpl.searchByTitle("aaa");
 
-    List<ArticleDto> resList = _articleServiceImpl.searchByTagName("aaa");
+// verify(_articleMapper, times(1)).searchByTitle("aaa");
 
-    verify(_articleMapper, times(1)).searchByTagName("aaa");
+// Assertions.assertEquals(artList.get(0).getTitle(),
+// resList.get(0).getTitle());
+// }
 
-    Assertions.assertEquals(artList.get(0).getTags().get(0).getName(), resList.get(0).getTags().get(0).getName());
-  }
+// @Test
+// public void searchByTagNameTest() {
 
-  @Test
-  public void insertTest() {
-    Tag tag = new Tag();
-    tag.setId(456);
-    tag.setName("test");
-    List<Integer> tagList = new ArrayList<Integer>();
-    tagList.add(456);
+// List<ArticleDto> artList = new ArrayList<>();
+// ArticleDto articleDto = new ArticleDto();
+// List<TagDto> tagList = new ArrayList<>();
+// TagDto tagDto = new TagDto();
+// tagDto.setName("aaa");
+// tagList.add(tagDto);
+// articleDto.setTags(tagList);
+// artList.add(articleDto);
 
-    TagDto tagDto = new TagDto();
-    tagDto.setId(456);
-    tagDto.setName("test");
-    List<TagDto> tagDtoList = new ArrayList<TagDto>();
-    tagDtoList.add(tagDto);
+// when(_articleMapper.searchByTagName("aaa")).thenReturn(artList);
 
-    Article art = new Article();
-    ArticleDto artDto = new ArticleDto();
-    art.setId(123);
-    art.setTagIds(tagList);
-    artDto.setId(123);
-    artDto.setTags(tagDtoList);
+// List<ArticleDto> resList = _articleServiceImpl.searchByTagName("aaa");
 
-    // mockの設定
-    doNothing().when(_articleMapper).insert(art);
+// verify(_articleMapper, times(1)).searchByTagName("aaa");
 
-    doNothing().when(_articleMapper).addTag(123, 456);
+// Assertions.assertEquals(artList.get(0).getTags().get(0).getName(),
+// resList.get(0).getTags().get(0).getName());
+// }
 
-    when(_articleMapper.findById(123)).thenReturn(Optional.of(artDto));
+// @Test
+// public void insertTest() {
+// Tag tag = new Tag();
+// tag.setId(456);
+// tag.setName("test");
+// List<Integer> tagList = new ArrayList<Integer>();
+// tagList.add(456);
 
-    // serviceの起動
-    var res = _articleServiceImpl.insert(art);
+// TagDto tagDto = new TagDto();
+// tagDto.setId(456);
+// tagDto.setName("test");
+// List<TagDto> tagDtoList = new ArrayList<TagDto>();
+// tagDtoList.add(tagDto);
 
-    verify(_articleMapper, times(1)).insert(art);
+// Article art = new Article();
+// ArticleDto artDto = new ArticleDto();
+// art.setId(123);
+// art.setTagIds(tagList);
+// artDto.setId(123);
+// artDto.setTags(tagDtoList);
 
-    Assertions.assertEquals(123, res.getId());
+// // mockの設定
+// doNothing().when(_articleMapper).insert(art);
 
-    Assertions.assertEquals(456, res.getTags().get(0).getId());
+// doNothing().when(_articleMapper).addTag(123, 456);
 
-  }
+// when(_articleMapper.findById(123)).thenReturn(Optional.of(artDto));
 
-  @Test
-  public void updateTest() {
-    Tag tag = new Tag();
-    tag.setId(456);
-    tag.setName("test");
-    List<Integer> tagList = new ArrayList<Integer>();
-    tagList.add(456);
+// // serviceの起動
+// var res = _articleServiceImpl.insert(art);
 
-    TagDto tagDto = new TagDto();
-    tagDto.setId(456);
-    tagDto.setName("test");
-    List<TagDto> tagDtoList = new ArrayList<TagDto>();
-    tagDtoList.add(tagDto);
+// verify(_articleMapper, times(1)).insert(art);
 
-    Article art = new Article();
-    ArticleDto artDto = new ArticleDto();
-    art.setId(123);
-    art.setTagIds(tagList);
-    artDto.setId(123);
-    artDto.setTags(tagDtoList);
+// Assertions.assertEquals(123, res.getId());
 
-    // mockの設定
-    doNothing().when(_articleMapper).update(art);
+// Assertions.assertEquals(456, res.getTags().get(0).getId());
 
-    doNothing().when(_articleMapper).addTag(123, 456);
+// }
 
-    when(_articleMapper.findById(123)).thenReturn(Optional.of(artDto));
+// @Test
+// public void updateTest() {
+// Tag tag = new Tag();
+// tag.setId(456);
+// tag.setName("test");
+// List<Integer> tagList = new ArrayList<Integer>();
+// tagList.add(456);
 
-    // serviceの起動
-    var res = _articleServiceImpl.update(art);
+// TagDto tagDto = new TagDto();
+// tagDto.setId(456);
+// tagDto.setName("test");
+// List<TagDto> tagDtoList = new ArrayList<TagDto>();
+// tagDtoList.add(tagDto);
 
-    verify(_articleMapper, times(1)).update(art);
+// Article art = new Article();
+// ArticleDto artDto = new ArticleDto();
+// art.setId(123);
+// art.setTagIds(tagList);
+// artDto.setId(123);
+// artDto.setTags(tagDtoList);
 
-    Assertions.assertEquals(123, res.getId());
+// // mockの設定
+// doNothing().when(_articleMapper).update(art);
 
-    Assertions.assertEquals(456, res.getTags().get(0).getId());
-  }
+// doNothing().when(_articleMapper).addTag(123, 456);
 
-  @Test
-  public void deleteTest() {
+// when(_articleMapper.findById(123)).thenReturn(Optional.of(artDto));
 
-    doNothing().when(_articleMapper).delete(123);
+// // serviceの起動
+// var res = _articleServiceImpl.update(art);
 
-    int resId = _articleServiceImpl.delete(123);
+// verify(_articleMapper, times(1)).update(art);
 
-    verify(_articleMapper, times(1)).delete(123);
+// Assertions.assertEquals(123, res.getId());
 
-    Assertions.assertEquals(123, resId);
-  }
+// Assertions.assertEquals(456, res.getTags().get(0).getId());
+// }
 
-}
+// @Test
+// public void deleteTest() {
+
+// doNothing().when(_articleMapper).delete(123);
+
+// int resId = _articleServiceImpl.delete(123);
+
+// verify(_articleMapper, times(1)).delete(123);
+
+// Assertions.assertEquals(123, resId);
+// }
+
+// }
